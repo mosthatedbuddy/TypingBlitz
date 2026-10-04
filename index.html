@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Typing Blitz — Test Your Speed</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="logo">⌨️ Typing<span>Blitz</span></h1>
+    <div class="header-right">
+      <span class="streak" id="streak-badge" title="Daily challenge streak" hidden>🔥 <b id="streak-val">0</b></span>
+      <button class="ghost-btn" id="scores-btn" type="button">🏆 Best Scores</button>
+    </div>
+  </header>
+
+  <main class="game">
+    <section class="card controls">
+      <div class="control-row">
+        <div class="seg" role="group" aria-label="Game mode">
+          <button class="mode-btn active" data-mode="paragraph" type="button">Paragraph</button>
+          <button class="mode-btn" data-mode="quotes" type="button">Quotes</button>
+        </div>
+        <label class="field">
+          <span>Theme</span>
+          <select id="theme">
+            <option value="mixed">Random mix</option>
+            <option value="tech">Technology</option>
+            <option value="nature">Nature &amp; science</option>
+            <option value="motivation">Motivation</option>
+            <option value="lifestyle">Lifestyle</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Layout</span>
+          <select id="layout">
+            <option value="qwerty">QWERTY</option>
+            <option value="azerty">AZERTY</option>
+            <option value="arabic">العربية RTL</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="control-row">
+        <div class="seg wrap" role="group" aria-label="Difficulty">
+          <button class="diff-btn active" data-diff="easy" type="button">Easy<small>≈50 words</small></button>
+          <button class="diff-btn" data-diff="medium" type="button">Medium<small>≈100 words</small></button>
+          <button class="diff-btn" data-diff="hard" type="button">Hard<small>≈200 words</small></button>
+          <span class="seg-sep"></span>
+          <button class="diff-btn" data-diff="timed15" type="button">15s</button>
+          <button class="diff-btn" data-diff="timed30" type="button">30s</button>
+          <button class="diff-btn" data-diff="timed60" type="button">60s</button>
+          <span class="seg-sep"></span>
+          <button class="diff-btn" data-diff="practice" type="button">Practice</button>
+          <button class="diff-btn" data-diff="daily" type="button">Daily</button>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="toggles">
+          <label class="toggle"><input type="checkbox" id="opt-symbols" /><span>Symbols</span></label>
+          <label class="toggle"><input type="checkbox" id="opt-strict" /><span>Strict</span></label>
+          <label class="toggle"><input type="checkbox" id="opt-ghost" /><span>Ghost</span></label>
+        </div>
+        <div class="control-actions">
+          <button class="ghost-btn icon-btn" id="sound-btn" type="button" title="Toggle sound">🔊</button>
+          <button class="ghost-btn icon-btn" id="a11y-btn" type="button" title="Accessibility mode">♿</button>
+          <button class="ghost-btn icon-btn" id="profile-btn" type="button" title="Profile">👤</button>
+          <button class="ghost-btn icon-btn" id="history-btn" type="button" title="History">📈</button>
+          <button class="primary-btn" id="new-text-btn" type="button">🔄 New Text</button>
+          <button class="ghost-btn" id="retry-btn" type="button">↺ Retry</button>
+          <button class="ghost-btn" id="custom-btn" type="button">✍️ Custom</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card stats" id="stats">
+      <div class="stat">
+        <span class="stat-value" id="stat-timer">0.0s</span>
+        <span class="stat-label">⏱ Time</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="stat-wpm">0</span>
+        <span class="stat-label">⚡ WPM</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="stat-wps">0.0</span>
+        <span class="stat-label">🚀 WPS</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="stat-acc">100%</span>
+        <span class="stat-label">🎯 Accuracy</span>
+      </div>
+      <div class="stat progress-stat">
+        <div class="progress-track" role="progressbar" id="progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="stat-label" id="progress-label">📊 Progress</span>
+      </div>
+    </section>
+
+    <section class="card typing-area" id="typing-area">
+      <div class="para-wrap">
+        <div class="paragraph" id="paragraph" aria-label="Text to type" tabindex="0"></div>
+        <div class="ghost" id="ghost" hidden><span>👻</span></div>
+      </div>
+      <textarea id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Hidden typing input"></textarea>
+      <p class="hint" id="hint">Click the box or press any key to start typing …</p>
+      <div class="loader" id="loader"><span class="spinner"></span> Loading text…</div>
+    </section>
+
+    <section class="card scores-card">
+      <h2>🏆 High Scores <span class="scores-sub" id="scores-toggle">local</span></h2>
+      <div class="scores-grid">
+        <div><h3>Easy</h3><ol id="scores-easy" class="scores-list"><li class="empty">No scores yet</li></ol></div>
+        <div><h3>Medium</h3><ol id="scores-medium" class="scores-list"><li class="empty">No scores yet</li></ol></div>
+        <div><h3>Hard</h3><ol id="scores-hard" class="scores-list"><li class="empty">No scores yet</li></ol></div>
+        <div><h3>Timed</h3><ol id="scores-timed" class="scores-list"><li class="empty">No scores yet</li></ol></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="result-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <h2 id="modal-title">🎉 Great job!</h2>
+      <div class="modal-stats">
+        <div class="modal-stat"><span class="modal-value" id="m-wpm">0</span><span class="modal-label">WPM</span></div>
+        <div class="modal-stat"><span class="modal-value" id="m-wps">0.0</span><span class="modal-label">WPS</span></div>
+        <div class="modal-stat"><span class="modal-value" id="m-acc">0%</span><span class="modal-label">Accuracy</span></div>
+        <div class="modal-stat"><span class="modal-value" id="m-time">0s</span><span class="modal-label">Time</span></div>
+      </div>
+      <p class="modal-note" id="m-note"></p>
+      <div class="heatmap" id="heatmap" hidden>
+        <p class="heatmap-title">🎹 Weak keys: <span id="heatmap-body"></span></p>
+      </div>
+      <div class="ghost-result" id="ghost-result" hidden></div>
+      <div class="modal-actions">
+        <button class="primary-btn" id="modal-retry" type="button">↺ Retry</button>
+        <button class="ghost-btn" id="modal-new" type="button">🔄 New Text</button>
+        <button class="ghost-btn" id="share-btn" type="button">📋 Share Result</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="scores-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="scores-modal-title">
+      <h2 id="scores-modal-title">🏆 High Scores</h2>
+      <div class="seg scores-tabs" role="group">
+        <button class="mode-btn active" id="tab-local" type="button">Local</button>
+        <button class="mode-btn" id="tab-online" type="button">Online</button>
+      </div>
+      <div class="scores-grid">
+        <div><h3>Easy</h3><ol id="modal-scores-easy" class="scores-list"></ol></div>
+        <div><h3>Medium</h3><ol id="modal-scores-medium" class="scores-list"></ol></div>
+        <div><h3>Hard</h3><ol id="modal-scores-hard" class="scores-list"></ol></div>
+        <div><h3>Timed</h3><ol id="modal-scores-timed" class="scores-list"></ol></div>
+      </div>
+      <p class="modal-note" id="online-note" hidden></p>
+      <div class="modal-actions">
+        <button class="ghost-btn" id="scores-close" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="history-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="history-modal-title">
+      <h2 id="history-modal-title">📈 Your Progress</h2>
+      <div class="chart" id="chart" aria-label="WPM over time"></div>
+      <p class="modal-note" id="chart-empty">No history yet — finish a few rounds to see your progress.</p>
+      <div class="modal-actions">
+        <button class="ghost-btn" id="history-close" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="profile-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+      <h2 id="profile-modal-title">👤 Your Profile</h2>
+      <p class="modal-note">Pick a name shown next to your high scores. Stored only on this device.</p>
+      <input type="text" id="profile-input" maxlength="14" placeholder="Type your name…" autocomplete="off" spellcheck="false" />
+      <div class="modal-actions">
+        <button class="primary-btn" id="profile-save" type="button">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="custom-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="custom-modal-title">
+      <h2 id="custom-modal-title">✍️ Your Own Text</h2>
+      <p class="modal-note">Paste any paragraph to practice on it.</p>
+      <textarea id="custom-input" rows="6" placeholder="Paste or type your text here…" autocomplete="off" spellcheck="false"></textarea>
+      <div class="modal-actions">
+        <button class="primary-btn" id="custom-ok" type="button">Start</button>
+        <button class="ghost-btn" id="custom-cancel" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
